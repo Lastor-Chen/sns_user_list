@@ -11,7 +11,7 @@ import { userRequest, user_INDEX_URL, photoRequest, photo_INDEX_URL } from './li
 import { dataPanel, requestNum } from './lib.js'
 
 // 載入公用function
-import { countValue, getDefault, getUserHtml, getModalHtml, putModalData, classToggle, saveToCache } from './lib.js' 
+import { countValue, getDefault, getUserHtml, getModalHtml, putModalData, classToggle, saveToCache } from './lib.js'
 
 
 
@@ -50,7 +50,22 @@ function putRandomUser(times) {
   flag = 0
 }
 
+function putUserData(times) {
+  // 計算要從cache中取出的資料範圍
+  const followingList = [...JSON.parse(sessionStorage.getItem('following'))]
+  const start = currentData.length
 
+  const pickData = followingList.slice(start, start + times)
+
+  // put into #data-panel
+  dataPanel.innerHTML += getUserHtml(pickData, dataPanel.dataset.mode)
+
+  // 紀錄當前data
+  currentData.push(...pickData)
+
+  // request 完成後, 重設flag
+  flag = 0
+}
 
 // ====================
 // 執行序
@@ -60,14 +75,24 @@ function putRandomUser(times) {
 getDefault()
 
 // 向API請求資料
-userRequest.get(user_INDEX_URL)
-  .then(res => {
-    tempData.push(...res.data.results)
+const currentPage = new URLSearchParams(location.search)
+const route = currentPage.get('route')
+if (route === 'following') {
+  // 取出瀏覽器cache, 刷新頁面
+  putUserData(requestNum)
 
-    // 要 await API回覆, 得放在裡面
-    putRandomUser(requestNum)
-  })
+  $('#nav-find').toggleClass('active')
+  $('#nav-following').toggleClass('active')
 
+} else {
+  userRequest.get(user_INDEX_URL)
+    .then(res => {
+      tempData.push(...res.data.results)
+
+      // 要 await API回覆, 得放在裡面
+      putRandomUser(requestNum)
+    })
+}
 
 // 監聽 #data-Panel click事件, 顯示user detail & 設置follow btn
 dataPanel.addEventListener('click', e => {
@@ -77,7 +102,7 @@ dataPanel.addEventListener('click', e => {
 
   if (e.target.matches('.btn-follow')) {
     // 建立瀏覽器緩存, 存放Following list
-    const targetUser = currentData.find(user => user.id === (+e.target.dataset.id) )
+    const targetUser = currentData.find(user => user.id === (+e.target.dataset.id))
     saveToCache(targetUser)
 
     // 轉換btn樣式
@@ -155,9 +180,18 @@ $(window).on('scroll', () => {
      * axios request的資料加載完之後, flag才會歸回0
      */
     flag++
-    putRandomUser(requestNum)
+
+    if (route === 'following') { putUserData(requestNum) }
+    else { putRandomUser(requestNum) }
   }
 
   // 如資料全數加載進頁面, 移除scroll監聽器, 釋放資源
-  if (tempData.length === 0) { $(window).unbind('scroll') }
+  if (route === 'following') {
+    const followingList = [...JSON.parse(sessionStorage.getItem('following'))]
+    if (currentData.length === followingList.length) {
+      $(window).unbind('scroll')
+    }
+  } else {
+    if (tempData.length === 0) { $(window).unbind('scroll') }
+  }
 })
