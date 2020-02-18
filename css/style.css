@@ -50,7 +50,7 @@ a.nav-link span {
   content: attr(data-count);
 }
 
-.active {
+.navbar-nav .active {
   border-bottom: 2px solid #000;
 }
 
@@ -88,7 +88,7 @@ a.nav-link span {
     border-top: 0;
   }
 
-  .active {
+  .navbar-nav .active {
     border-bottom: 0;
     border-left: 2px solid #000;
     border-right: 2px solid #000;
@@ -120,8 +120,24 @@ a.nav-link span {
 }
 
 /**********************/
-/* Card */
-.show-btn {
+/* display mode btn */
+#list-mode i {
+  font-size: 1.8rem;
+  cursor: pointer;
+  text-align: center;
+
+  /* 加入一個透明邊框, 讓active切換時畫面不會抖動 */
+  border-radius: 10%;
+  border: 1px solid transparent;
+}
+
+#list-mode i.fa-bars {
+  width: 38.8px;
+}
+
+/**********************/
+/* Content User Card */
+.show-modal {
   cursor: pointer;
 }
 
@@ -201,7 +217,11 @@ a.nav-link span {
 }
 
 /**********************/
-/* JS 調用項 */
+/* JS 調用項 (非Bootstrap) */
 .hide {
   display: none;
+}
+
+#list-mode i.active {
+  border: 1px solid #007bff;
 }

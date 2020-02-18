@@ -26,9 +26,10 @@
         </a>
       </div>
       <a class="navbar-brand" href="#">
-        <img class="rounded-circle" src="https://assets-lighthouse.s3.amazonaws.com/uploads/user/photo/1907/medium_02.jpg" width="30" height="30" alt="account icon">
+        <img class="rounded-circle" src="https://assets-lighthouse.s3.amazonaws.com/uploads/user/photo/1907/medium_02.jpg"
+          width="30" height="30" alt="account icon">
       </a>
-
+  
       <!-- search form -->
       <form id="search-form" class="form-inline position-relative">
         <input id="search-input" class="form-control mr-sm-2" type="text" placeholder="Search user" required>
@@ -36,12 +37,12 @@
           <button type="submit" class="search-icon-btn"></button>
         </span>
       </form>
-
+  
       <!-- mobile mode btn -->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span class="navbar-toggler-icon"></span>
       </button>
-
+  
       <!-- link list -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav nav">
@@ -52,7 +53,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a id="nav-following" class="nav-link" href="following.html">
+            <a id="nav-following" class="nav-link active" href="following.html">
               <span class="nav-label">Following</span>
               <span class="nav-value" data-count="0"></span>
             </a>
@@ -70,7 +71,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a id="nav-find" class="nav-link active" href="index.html">
+            <a id="nav-find" class="nav-link" href="index.html">
               <span class="nav-label">Find</span>
               <span class="nav-value" data-count="0"></span>
             </a>
@@ -79,7 +80,7 @@
       </div>
     </div>
   </nav>
-
+  
   <!-- info header -->
   <div class="container mt-3">
     <div class="d-flex align-items-center">
@@ -88,7 +89,7 @@
         <i class="fas fa-th p-1" data-mode="card"></i>
         <i class="fas fa-bars p-1" data-mode="list"></i>
       </div>
-
+  
       <!-- Search result info -->
       <p id="search-info" class="mb-0 text-muted"></p>
     </div>
@@ -102,7 +103,7 @@
       </div>
     </div>
   </section>
-
+  
   <!-- Bootstrap Modal -->
   <div class="modal fade" id="modal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -115,14 +116,17 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-4">
-              <img id="show-avatar" class="img-fluid" src="https://uinames.com/api/photos/female/9.jpg" alt="avatar photo">
+              <img id="show-avatar" class="img-fluid" src="https://uinames.com/api/photos/female/9.jpg"
+                alt="avatar photo">
             </div>
             <div class="col-8">
               <div id="show-info" class="row border-bottom pb-2">
                 <!-- user data 放置場 -->
               </div>
               <div class="row pt-2">
-                <div class="col">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo aliquam quidem provident voluptates cupiditate maiores corporis voluptas, ullam quasi rem nemo a ea accusantium consectetur, optio velit cum, itaque illum.</div>
+                <div class="col">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                  Explicabo aliquam quidem provident voluptates cupiditate maiores corporis voluptas, ullam quasi rem nemo
+                  a ea accusantium consectetur, optio velit cum, itaque illum.</div>
               </div>
             </div>
           </div>
@@ -135,16 +139,19 @@
   <import>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"></script>
     <!-- Boostrap plug-ins -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"></script>
     <!-- axios plug-ins -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <!-- main JS -->
-    <script src="js/main.js"></script>
+    <script src="js/following.js"></script>
   </import>
 </body>
 
