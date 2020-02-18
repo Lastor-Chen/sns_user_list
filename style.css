@@ -8,23 +8,55 @@ body {
   width: 2rem;
 }
 
+.sample {  /* 未實裝功能標示用 */
+  text-decoration: line-through;
+}
+
+.sample.nav-link:hover,
+.sample.nav-link:focus {  /* 覆蓋Bootstrap設定 */
+  text-decoration: line-through;
+}
+
 .nav-link {
   border-bottom: 0 solid #000;
   transition-property: border-bottom;
   transition: 0.15s linear;
+  padding: 0;
+  text-align: center;
+  min-width: 4rem;
 }
 
 .nav-link:hover {
   border-bottom: 2px solid #000;
 }
 
-.active .nav-link {
+a.nav-link span {
+  /* 禁止click, 讓.nav-link永遠只會點到<a>, 方便JS下判定*/
+  pointer-events: none;
+}
+
+.nav-label {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.nav-value {
+  display: block;
+  margin-top: -0.3rem;
+  font-size: 1.1rem;
+}
+
+.nav-value::before {
+  content: attr(data-count);
+}
+
+.active {
   border-bottom: 2px solid #000;
 }
 
 .search-icon {
-    position: absolute;
-    right: 1rem;
+  position: absolute;
+  right: 1rem;
 }
 
 .search-icon-btn {
@@ -56,11 +88,16 @@ body {
     border-top: 0;
   }
 
-  .active .nav-link {
+  .active {
     border-bottom: 0;
     border-left: 2px solid #000;
     border-right: 2px solid #000;
     margin: 0 auto;
+  }
+
+  .nav-link {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 
   .nav-link:hover { /* mobile時, 關閉hover效果 */
@@ -69,6 +106,16 @@ body {
 
   .nav-item:active { /* mobile時, 用active取代hover */
     background-color: #ccc;
+  }
+
+  .nav-label {
+    display: inline;
+    font-size: 1rem;
+  }
+
+  .nav-value {
+    display: inline;
+    font-size: 1rem;
   }
 }
 
@@ -115,6 +162,7 @@ body {
 
 .card-title {
   margin-bottom: 0.3rem;
+  display: inline-block; /* 讓按鈕判定框符合文字 */
 }
 
 .card-title:hover,
@@ -150,4 +198,10 @@ body {
   font-weight: 900;
   content: "\f22d";
   margin-right: 0.5rem;
+}
+
+/**********************/
+/* JS 調用項 */
+.hide {
+  display: none;
 }
