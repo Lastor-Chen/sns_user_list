@@ -9,7 +9,7 @@ const tempData = []    // 供 putRandomUser() 隨機產生 user 使用
 let currentData = []   // 存放頁面上, 當前存在的data, 供 mode切換 抓資料用
 
 const currentPage = new URLSearchParams(location.search)
-const route = currentPage.get('route')
+const route = currentPage.get('route') || 'find'
 
 function putRandomUser(times) {
   // 打亂 Array 排列, 產生隨機效果
@@ -59,25 +59,24 @@ function putUserData(times) {
 // 執行序
 // ====================
 
-// 初始化頁面內容, 模擬後端Server, 重新整理後先抓取瀏覽器cache配置初始資料
+// 初始化, 取得瀏覽器cache
 getDefault(dataPanel)
 
-// 向API請求資料
+if (route === 'find') {
+  // 向API請求資料
+  userRequest.get(USER_INDEX_URL)
+    .then(res => {
+      tempData.push(...res.data.results)
+      putRandomUser(requestNum)
+    })
+}
+
 if (route === 'following') {
   // 取出瀏覽器cache, 刷新頁面
   putUserData(requestNum)
 
   $('#nav-find').toggleClass('active')
   $('#nav-following').toggleClass('active')
-
-} else {
-  userRequest.get(USER_INDEX_URL)
-    .then(res => {
-      tempData.push(...res.data.results)
-
-      // 要 await API回覆, 得放在裡面
-      putRandomUser(requestNum)
-    })
 }
 
 // 監聽 #data-Panel click事件, 顯示user detail & 設置follow btn
@@ -149,10 +148,9 @@ $('#list-mode').on('click', e => {
   sessionStorage.setItem('mode', mode)
 })
 
-// 監聽 window scroll事件, 到 bottom 時加入新 user data
+// 監聽 scroll, 下拉時加入新 user data
 $(window).on('scroll', () => {
-  // 此專案希望忽略search頁的scroll監聽
-  // Search結果頁時, return掉, 並移除scroll監聽
+  // search 時, 不啟用下拉分頁
   if ($('#search-info').text()) return $(window).unbind('scroll')
 
   // document高 扣掉 視窗高 大約等於scrollBar拉到最底時的scrollY
@@ -165,18 +163,19 @@ $(window).on('scroll', () => {
      * axios request的資料加載完之後, flag才會歸回0
      */
     flag++
-
+    if (route === 'find') { putRandomUser(requestNum) }
     if (route === 'following') { putUserData(requestNum) }
-    else { putRandomUser(requestNum) }
   }
 
-  // 如資料全數加載進頁面, 移除scroll監聽器, 釋放資源
+  // data 全數加載完, 移除 scroll 監聽器, 釋放資源
+  if (route === 'find') {
+    if (tempData.length === 0) { $(window).unbind('scroll') }
+  }
+
   if (route === 'following') {
     const followingList = [...JSON.parse(sessionStorage.getItem('following'))]
     if (currentData.length === followingList.length) {
       $(window).unbind('scroll')
     }
-  } else {
-    if (tempData.length === 0) { $(window).unbind('scroll') }
   }
 })
