@@ -1,0 +1,153 @@
+body {
+  background-color: #e6ecf0;
+}
+
+/**********************/
+/* NavBar */
+.svg-btn {
+  width: 2rem;
+}
+
+.nav-link {
+  border-bottom: 0 solid #000;
+  transition-property: border-bottom;
+  transition: 0.15s linear;
+}
+
+.nav-link:hover {
+  border-bottom: 2px solid #000;
+}
+
+.active .nav-link {
+  border-bottom: 2px solid #000;
+}
+
+.search-icon {
+    position: absolute;
+    right: 1rem;
+}
+
+.search-icon-btn {
+  background: transparent;
+  border: 0;
+}
+
+.search-icon-btn::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f002";
+  color: #adb5bd;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-brand {
+    margin: 0 auto 0 0;
+  }
+  
+  .navbar-collapse {
+    text-align: center;
+  }
+
+  .nav-item {
+    border-top: 1px solid rgb(212, 212, 212);
+  }
+
+  .nav-item:first-child {
+    border-top: 0;
+  }
+
+  .active .nav-link {
+    border-bottom: 0;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    margin: 0 auto;
+  }
+
+  .nav-link:hover { /* mobile時, 關閉hover效果 */
+    border-bottom: 0;
+  }
+
+  .nav-item:active { /* mobile時, 用active取代hover */
+    background-color: #ccc;
+  }
+}
+
+/**********************/
+/* Card */
+.show-btn {
+  cursor: pointer;
+}
+
+.banner {
+  overflow: hidden;
+  width: 100%;
+  height: 100px;
+  border-top-left-radius: .25rem;
+  border-top-right-radius: .25rem;
+}
+
+.avatar {
+  max-width: 70px;
+  margin-top: calc(-70px/2 - 0.5rem); /* 求出讓avatar能剛好卡一半的位置 */
+  max-height: 70px; /* mt是負值會影響到高, 需重設 */
+  margin-left: calc(15px + 1rem); /* 與card-body對齊 */
+  box-shadow: 0 0 0 5px #fff;
+  border-radius: 50%;
+}
+
+.btn-follow {
+  margin: 0 2rem 0 auto;
+  min-width: 85px;
+  font-size: 0.8em;
+}
+
+.btn-outline-primary::before {
+  content: attr(data-follow);  /* 按鈕文字 */
+}
+
+.btn-primary::before {
+  content: attr(data-following);
+}
+
+.card-body {
+  padding: 0.6rem;
+}
+
+.card-title {
+  margin-bottom: 0.3rem;
+}
+
+.card-title:hover,
+.card-subtitle span:hover {
+  text-decoration: underline;
+}
+
+/**********************/
+/* Modal */
+.icon-created_at::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f073";
+  margin-right: 0.5rem;
+}
+
+.icon-email::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f0e0";
+  margin-right: 0.5rem;
+}
+
+.icon-region::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f3c5";
+  margin-right: 0.5rem;
+}
+
+.icon-gender::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f22d";
+  margin-right: 0.5rem;
+}
