@@ -1,27 +1,15 @@
-/* global $ */
+import { userRequest, USER_INDEX_URL } from './config.js'
+import { countValue, getDefault, getUserHtml, putModalData, classToggle, saveToCache } from './lib.js'
 
-// ====================
-// 引入公用項目
-// ====================
+const dataPanel = document.querySelector('#data-panel')
+const requestNum = 24  // 單次需求數
 
-// 載入API
-import { userRequest, user_INDEX_URL, photoRequest, photo_INDEX_URL } from './lib.js'
+let flag = 0           // 下方scroll監聽事件使用的flag
+const tempData = []    // 供 putRandomUser() 隨機產生 user 使用
+let currentData = []   // 存放頁面上, 當前存在的data, 供 mode切換 抓資料用
 
-// 載入公用變數
-import { dataPanel, requestNum } from './lib.js'
-
-// 載入公用function
-import { countValue, getDefault, getUserHtml, getModalHtml, putModalData, classToggle, saveToCache } from './lib.js'
-
-
-
-// ====================
-// 宣告
-// ====================
-
-let flag = 0  // 下方scroll監聽事件使用的flag
-const tempData = []  // 供 putRandomUser() 隨機產生 user 使用
-let currentData = []  // 存放頁面上, 當前存在的data, 供 mode切換 抓資料用
+const currentPage = new URLSearchParams(location.search)
+const route = currentPage.get('route')
 
 function putRandomUser(times) {
   // 打亂 Array 排列, 產生隨機效果
@@ -72,11 +60,9 @@ function putUserData(times) {
 // ====================
 
 // 初始化頁面內容, 模擬後端Server, 重新整理後先抓取瀏覽器cache配置初始資料
-getDefault()
+getDefault(dataPanel)
 
 // 向API請求資料
-const currentPage = new URLSearchParams(location.search)
-const route = currentPage.get('route')
 if (route === 'following') {
   // 取出瀏覽器cache, 刷新頁面
   putUserData(requestNum)
@@ -85,7 +71,7 @@ if (route === 'following') {
   $('#nav-following').toggleClass('active')
 
 } else {
-  userRequest.get(user_INDEX_URL)
+  userRequest.get(USER_INDEX_URL)
     .then(res => {
       tempData.push(...res.data.results)
 
@@ -95,7 +81,7 @@ if (route === 'following') {
 }
 
 // 監聽 #data-Panel click事件, 顯示user detail & 設置follow btn
-dataPanel.addEventListener('click', e => {
+$(dataPanel).on('click', e => {
   if (e.target.matches('.show-modal')) {
     putModalData(e)
   }
@@ -123,7 +109,7 @@ $('#search-form').on('submit', e => {
   const regex = new RegExp(inputValue, 'i')
 
   // 從API server過濾資料
-  userRequest.get(user_INDEX_URL)
+  userRequest.get(USER_INDEX_URL)
     .then(res => {
       const data = res.data.results
 
@@ -164,7 +150,6 @@ $('#list-mode').on('click', e => {
 })
 
 // 監聽 window scroll事件, 到 bottom 時加入新 user data
-
 $(window).on('scroll', () => {
   // 此專案希望忽略search頁的scroll監聽
   // Search結果頁時, return掉, 並移除scroll監聽
