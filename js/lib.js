@@ -1,4 +1,4 @@
-import { userRequest, USER_INDEX_URL, photoRequest, photo_INDEX_URL } from './config.js'
+import { userRequest, USER_INDEX_URL, getRandomPhoto } from './config.js'
 
 ///////////////////////////
 // Tool function
@@ -45,7 +45,7 @@ function getUserHtml(data, mode) {
         <div class="card-top col-6 col-lg-4 col-xl-3 mb-4">
           <div class="card">
             <div class="banner">
-              <img class="show-modal" src="${photoRequest}${photo_INDEX_URL}${num}" ${dataset}>
+              <img class="show-modal" src="${getRandomPhoto(num)}" ${dataset}>
             </div>
             <div class="row pt-2">
               <img class="avatar show-modal" src="${user.avatar}" alt="photo" ${dataset}>

@@ -2,7 +2,7 @@ import { userRequest, USER_INDEX_URL } from './config.js'
 import { countValue, getDefault, getUserHtml, putModalData, classToggle, saveToCache } from './lib.js'
 
 const dataPanel = document.querySelector('#data-panel')
-const requestNum = 24  // 單次需求數
+const LIMIT = 24  // 單次需求數
 
 let flag = 0           // 下方scroll監聽事件使用的flag
 const tempData = []    // 供 putRandomUser() 隨機產生 user 使用
@@ -11,13 +11,13 @@ let currentData = []   // 存放頁面上, 當前存在的data, 供 mode切換 �
 const currentPage = new URLSearchParams(location.search)
 const route = currentPage.get('route') || 'find'
 
-function putRandomUser(times) {
+function putRandomUser(limit) {
   // 打亂 Array 排列, 產生隨機效果
   tempData.sort(() => 0.5 - Math.random())
 
-  // 抽選 {times} 個 user
+  // 抽選 {limit} 個 user
   const pickRandom = []
-  for (let i = 0; i < times; i++) {
+  for (let i = 0; i < limit; i++) {
     // 如已抽光, 不執行下面code
     if (!tempData[0]) continue
 
@@ -38,12 +38,12 @@ function putRandomUser(times) {
   flag = 0
 }
 
-function putUserData(times) {
+function putUserData(limit) {
   // 計算要從cache中取出的資料範圍
   const followingList = [...JSON.parse(sessionStorage.getItem('following'))]
   const start = currentData.length
 
-  const pickData = followingList.slice(start, start + times)
+  const pickData = followingList.slice(start, start + limit)
 
   // put into #data-panel
   dataPanel.innerHTML += getUserHtml(pickData, dataPanel.dataset.mode)
@@ -67,13 +67,13 @@ if (route === 'find') {
   userRequest.get(USER_INDEX_URL)
     .then(res => {
       tempData.push(...res.data.results)
-      putRandomUser(requestNum)
+      putRandomUser(LIMIT)
     })
 }
 
 if (route === 'following') {
   // 取出瀏覽器cache, 刷新頁面
-  putUserData(requestNum)
+  putUserData(LIMIT)
 
   $('#nav-find').toggleClass('active')
   $('#nav-following').toggleClass('active')
@@ -163,8 +163,8 @@ $(window).on('scroll', () => {
      * axios request的資料加載完之後, flag才會歸回0
      */
     flag++
-    if (route === 'find') { putRandomUser(requestNum) }
-    if (route === 'following') { putUserData(requestNum) }
+    if (route === 'find') { putRandomUser(LIMIT) }
+    if (route === 'following') { putUserData(LIMIT) }
   }
 
   // data 全數加載完, 移除 scroll 監聽器, 釋放資源

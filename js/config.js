@@ -1,11 +1,22 @@
-// 第三方 API config
-
+// Users API config
 const userRequest = axios.create({
   baseURL: 'https://lighthouse-user-api.herokuapp.com/'
 })
 const USER_INDEX_URL = 'api/v1/users/'
 
-const photoRequest = 'https://picsum.photos/'
-const photo_INDEX_URL = '350/100?random='
+// Photos API config
+const PHOTO_WIDTH = 350
+const PHOTO_HEIGHT = 100
 
-export { userRequest, USER_INDEX_URL, photoRequest, photo_INDEX_URL }
+/**
+ * @param  { Number } width
+ * @param  { Number } height
+ * @param  { Number } num
+ * @return { String }
+ * @public
+ */
+function getRandomPhoto(num) {
+  return `https://picsum.photos/${PHOTO_WIDTH}/${PHOTO_HEIGHT}?random=${num}`
+}
+
+export { userRequest, USER_INDEX_URL, getRandomPhoto }
