@@ -39,10 +39,13 @@ function putRandomUser(limit) {
 }
 
 function putUserData(limit) {
-  // 計算要從cache中取出的資料範圍
   const followingList = [...JSON.parse(sessionStorage.getItem('following'))]
-  const start = currentData.length
 
+  if (!followingList.length) { $('#content-status').text('No following users') }
+  else { $('#content-status').remove() }
+
+  // 處理分頁數量
+  const start = currentData.length
   const pickData = followingList.slice(start, start + limit)
 
   // put into #data-panel
@@ -67,6 +70,7 @@ if (route === 'find') {
   userRequest.get(USER_INDEX_URL)
     .then(res => {
       tempData.push(...res.data.results)
+      $('#content-status').remove()
       putRandomUser(LIMIT)
     })
 }
@@ -105,6 +109,7 @@ $('#search-form').on('submit', e => {
 
   // 將搜尋關鍵字 format 成 RegExp
   const inputValue = $('#search-input').val()
+  if (!inputValue) return false
   const regex = new RegExp(inputValue, 'i')
 
   // 從API server過濾資料
