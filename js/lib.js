@@ -1,41 +1,12 @@
-/* global $, axios */
-
-// ====================
-// 第三方 API 集中放置場
-// ====================
-const userRequest = axios.create({
-  baseURL: 'https://lighthouse-user-api.herokuapp.com/'
-})
-const user_INDEX_URL = 'api/v1/users/'
-
-const photoRequest = 'https://picsum.photos/'
-const photo_INDEX_URL = '350/100?random='
-
-export { userRequest, user_INDEX_URL, photoRequest, photo_INDEX_URL }
-
-
-
-// ====================
-// 公用變數
-// ====================
-const dataPanel = document.querySelector('#data-panel')
-const requestNum = 24  // 單次需求數
-
-export { dataPanel, requestNum }
-
-
-
-// ====================
-// 公用函式
-// ====================
+import { userRequest, USER_INDEX_URL, getRandomPhoto } from './config.js'
 
 ///////////////////////////
-// Tools
+// Tool function
 function countValue(selector, length) {
   $(`${selector} .nav-value`).attr('data-count', length)
 }
 
-function getDefault() {
+function getDefault(dataPanel) {
   // 從cache, 配置顯示模式 'mode', 如無資料, 則設為card
   const mode = sessionStorage.getItem('mode') || 'card'
   dataPanel.dataset.mode = mode
@@ -74,7 +45,7 @@ function getUserHtml(data, mode) {
         <div class="card-top col-6 col-lg-4 col-xl-3 mb-4">
           <div class="card">
             <div class="banner">
-              <img class="show-modal" src="${photoRequest}${photo_INDEX_URL}${num}" ${dataset}>
+              <img class="show-modal" src="${getRandomPhoto(num)}" ${dataset}>
             </div>
             <div class="row pt-2">
               <img class="avatar show-modal" src="${user.avatar}" alt="photo" ${dataset}>
@@ -140,7 +111,7 @@ function putModalData(event) {
   $('#show-avatar').attr('hidden', true)
 
   // request user data from API by user id
-  userRequest.get(`${user_INDEX_URL}${event.target.dataset.id}`)
+  userRequest.get(`${USER_INDEX_URL}${event.target.dataset.id}`)
     .then(res => {
       const data = res.data
 
@@ -184,4 +155,4 @@ function saveToCache(user) {
   sessionStorage.setItem('following', JSON.stringify(list))
 }
 
-export { countValue, getDefault, getUserHtml, getModalHtml, putModalData, classToggle, saveToCache }
+export { countValue, getDefault, getUserHtml, putModalData, classToggle, saveToCache }

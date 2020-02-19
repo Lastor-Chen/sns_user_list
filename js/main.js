@@ -1,35 +1,23 @@
-/* global $ */
+import { userRequest, USER_INDEX_URL } from './config.js'
+import { countValue, getDefault, getUserHtml, putModalData, classToggle, saveToCache } from './lib.js'
 
-// ====================
-// 引入公用項目
-// ====================
+const dataPanel = document.querySelector('#data-panel')
+const LIMIT = 24  // 單次需求數
 
-// 載入API
-import { userRequest, user_INDEX_URL, photoRequest, photo_INDEX_URL } from './lib.js'
+let flag = 0           // 下方scroll監聽事件使用的flag
+const tempData = []    // 供 putRandomUser() 隨機產生 user 使用
+let currentData = []   // 存放頁面上, 當前存在的data, 供 mode切換 抓資料用
 
-// 載入公用變數
-import { dataPanel, requestNum } from './lib.js'
+const currentPage = new URLSearchParams(location.search)
+const route = currentPage.get('route') || 'find'
 
-// 載入公用function
-import { countValue, getDefault, getUserHtml, getModalHtml, putModalData, classToggle, saveToCache } from './lib.js' 
-
-
-
-// ====================
-// 宣告
-// ====================
-
-let flag = 0  // 下方scroll監聽事件使用的flag
-const tempData = []  // 供 putRandomUser() 隨機產生 user 使用
-let currentData = []  // 存放頁面上, 當前存在的data, 供 mode切換 抓資料用
-
-function putRandomUser(times) {
+function putRandomUser(limit) {
   // 打亂 Array 排列, 產生隨機效果
   tempData.sort(() => 0.5 - Math.random())
 
-  // 抽選 {times} 個 user
+  // 抽選 {limit} 個 user
   const pickRandom = []
-  for (let i = 0; i < times; i++) {
+  for (let i = 0; i < limit; i++) {
     // 如已抽光, 不執行下面code
     if (!tempData[0]) continue
 
@@ -50,34 +38,60 @@ function putRandomUser(times) {
   flag = 0
 }
 
+function putUserData(limit) {
+  const followingList = [...JSON.parse(sessionStorage.getItem('following'))]
 
+  if (!followingList.length) { $('#content-status').text('No following users') }
+  else { $('#content-status').remove() }
+
+  // 處理分頁數量
+  const start = currentData.length
+  const pickData = followingList.slice(start, start + limit)
+
+  // put into #data-panel
+  dataPanel.innerHTML += getUserHtml(pickData, dataPanel.dataset.mode)
+
+  // 紀錄當前data
+  currentData.push(...pickData)
+
+  // request 完成後, 重設flag
+  flag = 0
+}
 
 // ====================
 // 執行序
 // ====================
 
-// 初始化頁面內容, 模擬後端Server, 重新整理後先抓取瀏覽器cache配置初始資料
-getDefault()
+// 初始化, 取得瀏覽器cache
+getDefault(dataPanel)
 
-// 向API請求資料
-userRequest.get(user_INDEX_URL)
-  .then(res => {
-    tempData.push(...res.data.results)
+if (route === 'find') {
+  // 向API請求資料
+  userRequest.get(USER_INDEX_URL)
+    .then(res => {
+      tempData.push(...res.data.results)
+      $('#content-status').remove()
+      putRandomUser(LIMIT)
+    })
+}
 
-    // 要 await API回覆, 得放在裡面
-    putRandomUser(requestNum)
-  })
+if (route === 'following') {
+  // 取出瀏覽器cache, 刷新頁面
+  putUserData(LIMIT)
 
+  $('#nav-find').toggleClass('active')
+  $('#nav-following').toggleClass('active')
+}
 
 // 監聽 #data-Panel click事件, 顯示user detail & 設置follow btn
-dataPanel.addEventListener('click', e => {
+$(dataPanel).on('click', e => {
   if (e.target.matches('.show-modal')) {
     putModalData(e)
   }
 
   if (e.target.matches('.btn-follow')) {
     // 建立瀏覽器緩存, 存放Following list
-    const targetUser = currentData.find(user => user.id === (+e.target.dataset.id) )
+    const targetUser = currentData.find(user => user.id === (+e.target.dataset.id))
     saveToCache(targetUser)
 
     // 轉換btn樣式
@@ -95,10 +109,11 @@ $('#search-form').on('submit', e => {
 
   // 將搜尋關鍵字 format 成 RegExp
   const inputValue = $('#search-input').val()
+  if (!inputValue) return false
   const regex = new RegExp(inputValue, 'i')
 
   // 從API server過濾資料
-  userRequest.get(user_INDEX_URL)
+  userRequest.get(USER_INDEX_URL)
     .then(res => {
       const data = res.data.results
 
@@ -138,11 +153,9 @@ $('#list-mode').on('click', e => {
   sessionStorage.setItem('mode', mode)
 })
 
-// 監聽 window scroll事件, 到 bottom 時加入新 user data
-
+// 監聽 scroll, 下拉時加入新 user data
 $(window).on('scroll', () => {
-  // 此專案希望忽略search頁的scroll監聽
-  // Search結果頁時, return掉, 並移除scroll監聽
+  // search 時, 不啟用下拉分頁
   if ($('#search-info').text()) return $(window).unbind('scroll')
 
   // document高 扣掉 視窗高 大約等於scrollBar拉到最底時的scrollY
@@ -155,9 +168,19 @@ $(window).on('scroll', () => {
      * axios request的資料加載完之後, flag才會歸回0
      */
     flag++
-    putRandomUser(requestNum)
+    if (route === 'find') { putRandomUser(LIMIT) }
+    if (route === 'following') { putUserData(LIMIT) }
   }
 
-  // 如資料全數加載進頁面, 移除scroll監聽器, 釋放資源
-  if (tempData.length === 0) { $(window).unbind('scroll') }
+  // data 全數加載完, 移除 scroll 監聽器, 釋放資源
+  if (route === 'find') {
+    if (tempData.length === 0) { $(window).unbind('scroll') }
+  }
+
+  if (route === 'following') {
+    const followingList = [...JSON.parse(sessionStorage.getItem('following'))]
+    if (currentData.length === followingList.length) {
+      $(window).unbind('scroll')
+    }
+  }
 })
